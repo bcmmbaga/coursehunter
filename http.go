@@ -2,10 +2,13 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 	"regexp"
 
 	"golang.org/x/net/publicsuffix"
@@ -62,6 +65,28 @@ func newHunter(course, email, password string) (*hunter, error) {
 		client: client,
 		videos: parseCourseContent(resp.Body),
 	}, nil
+}
+
+func (h *hunter) download() {
+	for _, video := range h.videos {
+		resp, err := h.client.Get(video.URL)
+		if err != nil {
+			log.Fatalf("Error while Getting video: %v", err)
+		}
+		defer resp.Body.Close()
+
+		file := fmt.Sprintf("%s/%s.mp4", h.path, video.Name)
+		f, err := os.Create(file)
+		if err != nil {
+			log.Fatalf("Error Creating file: %v", err)
+		}
+		defer f.Close()
+
+		done := make(chan int64)
+
+		go showProgress(file, resp.ContentLength, done)
+		done <- saveToDisk(resp.Body, f)
+	}
 }
 
 func authenticateUser(email, password string, client *http.Client) bool {
