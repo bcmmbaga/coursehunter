@@ -25,15 +25,14 @@ var (
 )
 
 type hunter struct {
-	path   string
-	client *http.Client
-	videos []video
+	Path   string
+	Client *http.Client
+	Videos []video
 }
 
 type video struct {
-	Name      string `json:"name"`
-	URL       string `json:"url"`
-	RangeFrom int    `json:"rangeFrom"`
+	Name string `json:"name"`
+	URL  string `json:"url"`
 }
 
 var (
@@ -61,21 +60,21 @@ func newHunter(course, email, password string) (*hunter, error) {
 	defer resp.Body.Close()
 
 	return &hunter{
-		path:   course,
-		client: client,
-		videos: parseCourseContent(resp.Body),
+		Path:   course,
+		Client: client,
+		Videos: parseCourseContent(resp.Body),
 	}, nil
 }
 
 func (h *hunter) download() {
-	for _, video := range h.videos {
-		resp, err := h.client.Get(video.URL)
+	for _, video := range h.Videos {
+		resp, err := h.Client.Get(video.URL)
 		if err != nil {
 			log.Fatalf("Error while Getting video: %v", err)
 		}
 		defer resp.Body.Close()
 
-		file := fmt.Sprintf("%s/%s.mp4", h.path, video.Name)
+		file := fmt.Sprintf("%s/%s.mp4", h.Path, video.Name)
 		f, err := os.Create(file)
 		if err != nil {
 			log.Fatalf("Error Creating file: %v", err)
@@ -115,9 +114,8 @@ func parseCourseContent(reader io.Reader) []video {
 		title, _ := selector.Find(descMeta).Attr(content)
 		url, _ := selector.Find(linkAttr).Attr(linkTag)
 		contents = append(contents, video{
-			Name:      renameFileName(title),
-			URL:       url,
-			RangeFrom: 0,
+			Name: renameFileName(title),
+			URL:  url,
 		})
 	})
 
