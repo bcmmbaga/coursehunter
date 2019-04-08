@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"path"
 	"time"
 )
@@ -29,18 +28,7 @@ func showProgress(file string, contentLen int64, done chan int64) {
 		case <-done:
 			stop = true
 		default:
-			f, err := os.OpenFile(file, os.O_RDONLY, 0555)
-			if err != nil {
-				log.Fatalf("Failed to open file for read: %v", err)
-			}
-			defer f.Close()
-
-			info, err := f.Stat()
-			if err != nil {
-				log.Fatalf("Failed to retrieve file Info: %v", err)
-			}
-
-			size := info.Size()
+			size := fileSize(file)
 			fmt.Printf("\033[2K\r Downloading %s -----> Received %.1fM out of %.1fM", path.Base(file),
 				float64(size)/toMB, float64(contentLen)/toMB)
 		}
