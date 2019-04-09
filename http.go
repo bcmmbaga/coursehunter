@@ -66,7 +66,7 @@ func newHunter(course, email, password string) (*hunter, error) {
 	}, nil
 }
 
-func (h *hunter) download() {
+func (h *hunter) download(notify chan os.Signal) {
 	for _, video := range h.Videos {
 		resp, err := h.Client.Get(video.URL)
 		if err != nil {
@@ -80,6 +80,13 @@ func (h *hunter) download() {
 			log.Fatalf("Error Creating file: %v", err)
 		}
 		defer f.Close()
+
+		go func() {
+			<-notify
+			fmt.Println("\nDownload interrupted saving state")
+			h.saveState()
+			os.Exit(1)
+		}()
 
 		done := make(chan int64)
 

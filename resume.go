@@ -24,8 +24,13 @@ func getStates() *state {
 	return states
 }
 
-func (s *state) resume(start int) {
+func (s *state) resume(start int, notify chan os.Signal) {
 	for i := start - 1; i < len(s.Videos); i++ {
+		go func() {
+			<-notify
+			os.Exit(1)
+		}()
+
 		downloadRange(fmt.Sprintf("%s/%s.mp4", s.Path, s.Videos[i].Name), s.Videos[i].URL)
 	}
 }
