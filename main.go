@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 )
 
@@ -20,7 +21,6 @@ func init() {
 	flag.StringVar(&course, "n", "", "coursename to download")
 	flag.StringVar(&email, "e", "", "coursehunter.net login email")
 	flag.StringVar(&password, "p", "", "coursehunter.net login password")
-	flag.IntVar(&start, "start", 1, "index video to resume from")
 	flag.Parse()
 
 }
@@ -43,6 +43,10 @@ func main() {
 		h.download(notify)
 
 	} else if len(args) >= 2 && args[0] == "resume" {
+		start, err := strconv.Atoi(args[1])
+		if err != nil {
+			start = 1
+		}
 		getStates().resume(start, notify)
 
 	} else {
