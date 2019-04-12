@@ -6,8 +6,8 @@ coursehunters.net courses downloader
 
 ## Download executable from links below
 
-- [linux-amd64](https://github.com/bcmmbaga/coursehunter/releases/download/v0.1.0-beta/hunterD-linux-amd64)
-- [windows-amd64](https://github.com/bcmmbaga/coursehunter/releases/download/v0.1.0-beta/hunterD-windows-amd64.exe)
+- [linux-amd64](https://github.com/bcmmbaga/coursehunter/releases/download/v0.1.1/hunterD-linux-amd64)
+- [windows-amd64](https://github.com/bcmmbaga/coursehunter/releases/download/v0.1.1/hunterD-windows-amd64.exe)
 
 ## Usage
 
